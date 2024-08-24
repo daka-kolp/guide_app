@@ -7,9 +7,10 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.guideapp.R
+import com.example.guideapp.presentation.fragments.auth.AuthFragment
 import com.example.guideapp.presentation.fragments.auth.AuthViewModel
 import com.example.guideapp.presentation.fragments.content.ContentFragment
 import com.example.guideapp.presentation.helpers.OnAuthLaunch
@@ -17,6 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnAuthLaunch {
+    private val viewModel by viewModels<AuthViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,7 +28,6 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch {
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            val viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.login(
                     result.data,
@@ -39,8 +41,15 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch {
             }
         }
 
-    override fun signIn(intent: Intent) {
+    override fun login(intent: Intent) {
         startForResult.launch(intent)
+    }
+
+    override fun logout() {
+        viewModel.logout()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, AuthFragment())
+            .commit()
     }
 
     override fun showContent() {

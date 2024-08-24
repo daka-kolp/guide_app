@@ -1,7 +1,6 @@
 package com.example.guideapp.infrastructure.di
 
 import android.content.Context
-import com.example.guideapp.GuideApplication
 import com.example.guideapp.core.data.GoogleGuideRepository
 import com.example.guideapp.core.data.api.GuideApiClient
 import com.example.guideapp.core.domain.GuideRepository
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class GuideAppModule {
+class GuideAppLogicModule {
     private val baseUrl = "https://maps.googleapis.com/maps/api/"
 
     @Provides
@@ -24,14 +23,11 @@ class GuideAppModule {
 
     @Provides
     @Singleton
-    fun getGoogleSignInProvider(): GoogleSignInProvider = GoogleSignInProvider()
-
-    @Provides
-    @Singleton
     fun getGuideRepository(client: GuideApiClient): GuideRepository = GoogleGuideRepository(client)
 
+    @Singleton
     @Provides
-    fun providesMainApplicationInstance(@ApplicationContext context: Context): GuideApplication {
-        return context as GuideApplication
+    fun getGoogleSignInProvider(@ApplicationContext context: Context): GoogleSignInProvider {
+        return GoogleSignInProvider(context)
     }
 }
