@@ -13,6 +13,7 @@ import com.example.guideapp.R
 import com.example.guideapp.core.domain.entities.Geolocation
 import com.example.guideapp.core.domain.entities.Route
 import com.example.guideapp.core.domain.entities.Sight
+import com.example.guideapp.presentation.fragments.content.sights.SightsFragment
 import com.example.guideapp.presentation.helpers.OnAuthLaunch
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -40,6 +41,16 @@ class ContentFragment : Fragment() {
 
         val logoutButton = view.findViewById<Button>(R.id.logout_button)
         logoutButton.setOnClickListener { (requireActivity() as OnAuthLaunch).logout() }
+
+        val showSightsButton = view.findViewById<Button>(R.id.show_sights_button)
+        showSightsButton.setOnClickListener {
+            val state = sightsVM.uiSightsState.value
+            if (state is SightsViewModel.UISightsState.Result)
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.container, SightsFragment(state.sights))
+                    .addToBackStack("SightsFragment")
+                    .commit()
+        }
 
         val getSightsButton = view.findViewById<Button>(R.id.get_sights_button)
         getSightsButton.setOnClickListener {

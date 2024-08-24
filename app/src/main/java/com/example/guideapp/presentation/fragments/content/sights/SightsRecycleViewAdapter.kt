@@ -1,13 +1,15 @@
-package com.example.guideapp.presentation.fragments.content.result
+package com.example.guideapp.presentation.fragments.content.sights
 
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.guideapp.R
 import com.example.guideapp.core.domain.entities.Sight
+import com.squareup.picasso.Picasso
 
 class ResultsRecycleViewAdapter(var items: MutableList<Sight> = mutableListOf()) : RecyclerView.Adapter<TaskViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -23,10 +25,14 @@ class ResultsRecycleViewAdapter(var items: MutableList<Sight> = mutableListOf())
         val item = items[position]
         holder.name.text = item.name
         holder.location.text = item.geolocation.toString()
+        val image = item.photos?.first()
+        if(image != null) Picasso.get().load(image).into(holder.image)
+
     }
 }
 
 class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.name)
     val location: TextView = itemView.findViewById(R.id.location)
+    val image: ImageView = itemView.findViewById(R.id.sight_image)
 }
