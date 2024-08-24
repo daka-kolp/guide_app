@@ -15,12 +15,12 @@ interface GuideApiService {
         @Query("type") type: String = "tourist_attraction",
         @Query("radius") radius: Double = 2000.0,
         @Query("key") key: String = apiKey
-    ) : Response<SightsDto>
+    ): Response<SightsDto>
 
     @GET("directions/json")
     suspend fun getDirections(
         @Query("origin") origin: String,
         @Query("destination") destination: String,
         @Query("key") key: String = apiKey
-    ) : Response<RoutesDto>
+    ): Response<RoutesDto>
 }

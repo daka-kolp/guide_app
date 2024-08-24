@@ -27,7 +27,7 @@ class AuthFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val activity = requireActivity() as OnAuthLaunch
-        if(viewModel.getAccount() != null) activity.showContent()
+        if (viewModel.getAccount() != null) activity.showContent()
 
         val signInButton: SignInButton = view.findViewById(R.id.sign_in_button)
         signInButton.setOnClickListener { activity.login(viewModel.getClient().signInIntent) }

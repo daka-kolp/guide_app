@@ -78,7 +78,7 @@ class ContentFragment : Fragment() {
     }
 
     private fun onSightFetched(sights: List<Sight>, map: GoogleMap) {
-        sights.forEach {sight ->
+        sights.forEach { sight ->
             val location = sight.geolocation
             val coordinates = LatLng(location.latitude, location.longitude)
             val options = MarkerOptions().position(coordinates).title(sight.name)
@@ -105,9 +105,10 @@ class ContentFragment : Fragment() {
     }
 
     private fun onRouteFetched(routes: List<Route>, map: GoogleMap) {
-        val points = routes.first().points
-        val decodedPath = PolyUtil.decode(points)
-        map.addPolyline(PolylineOptions().addAll(decodedPath))
+        routes.forEach { route ->
+            val decodedPath = PolyUtil.decode(route.points)
+            map.addPolyline(PolylineOptions().addAll(decodedPath))
+        }
     }
 
     private fun onRouteFetchedError(error: String, context: Context) {

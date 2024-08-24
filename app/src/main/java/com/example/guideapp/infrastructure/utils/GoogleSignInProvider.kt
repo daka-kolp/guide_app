@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import javax.inject.Inject
 
-class GoogleSignInProvider @Inject constructor(private val context: Context){
+class GoogleSignInProvider @Inject constructor(private val context: Context) {
     private val serverClientId = "362347497673-acdd6gjgg5c3ep1ae7hah2a4tihdloch.apps.googleusercontent.com"
 
     fun getAccount(): GoogleSignInAccount? {

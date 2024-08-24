@@ -7,7 +7,7 @@ import com.example.guideapp.core.domain.entities.Geolocation
 import com.example.guideapp.core.domain.entities.Route
 import com.example.guideapp.core.domain.entities.Sight
 
-class GoogleGuideRepository(private val client: GuideApiClient): GuideRepository {
+class GoogleGuideRepository(private val client: GuideApiClient) : GuideRepository {
     override suspend fun getSightsByUserLocation(location: Geolocation): List<Sight> {
         val api = client.retrofit.create(GuideApiService::class.java)
         val result = api.getSights(location = location.toString())

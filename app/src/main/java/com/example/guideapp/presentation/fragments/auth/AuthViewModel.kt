@@ -9,7 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val googleSignInProvider: GoogleSignInProvider): ViewModel() {
+class AuthViewModel @Inject constructor(private val googleSignInProvider: GoogleSignInProvider) : ViewModel() {
     fun getAccount(): GoogleSignInAccount? {
         return googleSignInProvider.getAccount()
     }

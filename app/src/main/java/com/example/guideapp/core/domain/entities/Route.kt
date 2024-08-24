@@ -14,4 +14,3 @@ data class Route(val points: String, val distanceInMeters: Int, val timeInMinute
         return "$hours:$minutes:$seconds"
     }
 }
-

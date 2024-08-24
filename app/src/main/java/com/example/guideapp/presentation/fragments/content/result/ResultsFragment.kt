@@ -1,17 +1,14 @@
 package com.example.guideapp.presentation.fragments.content.result
 
-import android.content.Context
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.guideapp.R
-import com.example.guideapp.core.domain.entities.Sight
 
 class ResultsFragment : Fragment() {
     private val viewModel by viewModels<ResultsViewModel>()
