@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.viewModels
 import com.example.guideapp.R
 import com.example.guideapp.presentation.helpers.OnAuthLaunch
+import com.google.android.gms.maps.SupportMapFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,5 +28,10 @@ class ContentFragment : Fragment() {
 
         val logoutButton = view.findViewById<Button>(R.id.logout_button)
         logoutButton.setOnClickListener { (requireActivity() as OnAuthLaunch).logout() }
+
+        val supportMapFragment = getChildFragmentManager().findFragmentById(R.id.map) as SupportMapFragment
+        supportMapFragment.getMapAsync {
+
+        }
     }
 }
