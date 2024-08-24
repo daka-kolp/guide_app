@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.guideapp.R
 import com.example.guideapp.presentation.fragments.auth.AuthFragment
 import com.example.guideapp.presentation.fragments.auth.AuthViewModel
-import com.example.guideapp.presentation.fragments.content.ContentFragment
+import com.example.guideapp.presentation.fragments.content.content.ContentFragment
 import com.example.guideapp.presentation.helpers.OnAuthLaunch
 import dagger.hilt.android.AndroidEntryPoint
 
