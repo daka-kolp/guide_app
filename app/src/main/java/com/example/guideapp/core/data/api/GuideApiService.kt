@@ -1,9 +1,12 @@
 package com.example.guideapp.core.data.api
 
+import com.example.guideapp.core.data.api.dto.RoutesDto
+import com.example.guideapp.core.data.api.dto.SightDto
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-val apiKey = "AIzaSyCqDLPUrWoM0pawFuA6X2OFcTr1kijCn-w"
+const val apiKey = "AIzaSyAixLB4aLKOSaeOh9sdt0_2wwxJQzt-Vdc"
 
 interface GuideApiService {
     @GET("place/nearbysearch/json")
@@ -12,5 +15,12 @@ interface GuideApiService {
         @Query("radius") radius: Double,
         @Query("type") type: String,
         @Query("key") key: String = apiKey
-    ) : List<SightDto>
+    ) : Response<List<SightDto>>
+
+    @GET("directions/json")
+    suspend fun getDirections(
+        @Query("origin") origin: String,
+        @Query("destination") destination: String,
+        @Query("key") key: String = apiKey
+    ) : Response<RoutesDto>
 }

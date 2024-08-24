@@ -32,14 +32,4 @@ class ResultsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.results_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
     }
-
-
-    private fun onItemsFetched(heroes: List<Sight>, recyclerView: RecyclerView) {
-        adapter = ResultsRecycleViewAdapter(heroes as ArrayList<Sight>)
-        recyclerView.adapter = adapter
-    }
-
-    private fun onItemsFetchedError(error: String, context: Context) {
-        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-    }
 }

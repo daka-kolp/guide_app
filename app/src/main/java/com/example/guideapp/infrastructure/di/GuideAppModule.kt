@@ -15,11 +15,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class GuideAppLogicModule {
-    private val baseUrl = "https://maps.googleapis.com/maps/api/"
-
     @Provides
     @Singleton
-    fun getApiClient(): GuideApiClient = GuideApiClient(baseUrl)
+    fun getApiClient(): GuideApiClient = GuideApiClient()
 
     @Provides
     @Singleton

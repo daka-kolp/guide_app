@@ -1,4 +1,4 @@
-package com.example.guideapp.core.data.api
+package com.example.guideapp.core.data.api.dto
 
 import com.example.guideapp.core.domain.entities.Geolocation
 import com.example.guideapp.core.domain.entities.Sight
