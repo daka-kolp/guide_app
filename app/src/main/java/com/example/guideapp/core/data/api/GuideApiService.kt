@@ -1,7 +1,7 @@
 package com.example.guideapp.core.data.api
 
 import com.example.guideapp.core.data.api.dto.RoutesDto
-import com.example.guideapp.core.data.api.dto.SightDto
+import com.example.guideapp.core.data.api.dto.SightsDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -15,7 +15,7 @@ interface GuideApiService {
         @Query("type") type: String = "tourist_attraction",
         @Query("radius") radius: Double = 2000.0,
         @Query("key") key: String = apiKey
-    ) : Response<List<SightDto>>
+    ) : Response<SightsDto>
 
     @GET("directions/json")
     suspend fun getDirections(

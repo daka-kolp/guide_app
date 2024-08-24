@@ -11,7 +11,7 @@ class GoogleGuideRepository(private val client: GuideApiClient): GuideRepository
     override suspend fun getSightsByUserLocation(location: Geolocation): List<Sight> {
         val api = client.retrofit.create(GuideApiService::class.java)
         val result = api.getSights(location = location.toString())
-        return result.body()!!.map { it.toEntity() }
+        return result.body()!!.sights.map { it.toEntity() }
     }
 
     override suspend fun getDirections(origin: Geolocation, destination: Geolocation): List<Route> {
