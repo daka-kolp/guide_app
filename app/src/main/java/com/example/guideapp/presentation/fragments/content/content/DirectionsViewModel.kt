@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class ContentViewModel @Inject constructor(private val repository: GuideRepository) : ViewModel() {
+class DirectionsViewModel @Inject constructor(private val repository: GuideRepository) : ViewModel() {
     private val _uiDirectionsState = MutableLiveData<UIDirectionsState>(UIDirectionsState.Empty)
     val uiDirectionsState: LiveData<UIDirectionsState> = _uiDirectionsState
 
