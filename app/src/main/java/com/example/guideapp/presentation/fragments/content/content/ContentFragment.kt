@@ -74,6 +74,11 @@ class ContentFragment : Fragment() {
 
     private fun onRouteFetched(routes: List<Route>, map: GoogleMap) {
         val points = routes.first().points
+        println("----------------------")
+        println(routes.first().getFormattedTime())
+        println(routes.first().getFormattedDistance())
+        println("----------------------")
+
         val decodedPath = PolyUtil.decode(points)
         map.addPolyline(PolylineOptions().addAll(decodedPath))
     }

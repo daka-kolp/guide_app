@@ -12,8 +12,8 @@ interface GuideApiService {
     @GET("place/nearbysearch/json")
     suspend fun getSights(
         @Query("location") location: String,
-        @Query("radius") radius: Double,
-        @Query("type") type: String,
+        @Query("type") type: String = "tourist_attraction",
+        @Query("radius") radius: Double = 2000.0,
         @Query("key") key: String = apiKey
     ) : Response<List<SightDto>>
 

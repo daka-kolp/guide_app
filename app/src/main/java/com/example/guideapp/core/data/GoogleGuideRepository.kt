@@ -10,11 +10,7 @@ import com.example.guideapp.core.domain.entities.Sight
 class GoogleGuideRepository(private val client: GuideApiClient): GuideRepository {
     override suspend fun getSightsByUserLocation(location: Geolocation): List<Sight> {
         val api = client.retrofit.create(GuideApiService::class.java)
-        val result = api.getSights(
-            location = location.toString(),
-            radius = 1000.0,
-            type = "tourist_attraction"
-        )
+        val result = api.getSights(location = location.toString())
         return result.body()!!.map { it.toEntity() }
     }
 
