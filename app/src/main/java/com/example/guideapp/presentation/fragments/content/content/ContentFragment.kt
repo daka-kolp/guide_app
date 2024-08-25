@@ -78,24 +78,27 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private fun showSights() {
         val state = sightsVM.uiSightsState.value
-        if (state is SightsViewModel.UISightsState.Result)
+        if (state is SightsViewModel.UISightsState.Result) {
             parentFragmentManager.beginTransaction()
                 .add(R.id.container, SightsFragment(state.origin, state.sights))
                 .addToBackStack("SightsFragment")
                 .commit()
+        } else if (state is SightsViewModel.UISightsState.Error) {
+            onSightFetchedError(state.error)
+        }
     }
 
     private fun mapCallback(map: GoogleMap, view: View) {
-        directionsVM.uiDirectionsState.observe(viewLifecycleOwner) { onDirectionsViewUpdate(it, view, map) }
-        sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, view, map) }
-        locationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, view, map) }
+        directionsVM.uiDirectionsState.observe(viewLifecycleOwner) { onDirectionsViewUpdate(it, map) }
+        sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, map) }
+        locationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, map) }
         map.setOnMarkerClickListener(this)
     }
 
-    private fun onDirectionsViewUpdate(uiState: DirectionsViewModel.UIDirectionsState, view: View, map: GoogleMap) {
+    private fun onDirectionsViewUpdate(uiState: DirectionsViewModel.UIDirectionsState, map: GoogleMap) {
         when (uiState) {
             is DirectionsViewModel.UIDirectionsState.Result -> onRouteFetched(uiState.routes, map)
-            is DirectionsViewModel.UIDirectionsState.Error -> onRouteFetchedError(uiState.error, view.context)
+            is DirectionsViewModel.UIDirectionsState.Error -> onRouteFetchedError(uiState.error,)
             is DirectionsViewModel.UIDirectionsState.Empty -> Unit
             is DirectionsViewModel.UIDirectionsState.Processing -> Unit
         }
@@ -109,18 +112,14 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    private fun onRouteFetchedError(error: String, context: Context) {
-        Toast.makeText(
-            context,
-            "Error, the app can not fetch the route: $error",
-            Toast.LENGTH_LONG
-        ).show()
+    private fun onRouteFetchedError(error: String) {
+        Toast.makeText(context, "Error, the app can not fetch the route: $error", Toast.LENGTH_LONG).show()
     }
 
-    private fun onSightsViewUpdate(uiState: SightsViewModel.UISightsState, view: View, map: GoogleMap) {
+    private fun onSightsViewUpdate(uiState: SightsViewModel.UISightsState, map: GoogleMap) {
         when (uiState) {
             is SightsViewModel.UISightsState.Result -> onSightFetched(uiState.sights, map)
-            is SightsViewModel.UISightsState.Error -> onSightFetchedError(uiState.error, view.context)
+            is SightsViewModel.UISightsState.Error -> onSightFetchedError(uiState.error)
             is SightsViewModel.UISightsState.Empty -> Unit
             is SightsViewModel.UISightsState.Processing -> Unit
         }
@@ -134,19 +133,15 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    private fun onSightFetchedError(error: String, context: Context) {
-        Toast.makeText(
-            context,
-            "Error, the app can not fetch sights: $error",
-            Toast.LENGTH_LONG
-        ).show()
+    private fun onSightFetchedError(error: String) {
+        Toast.makeText(context, "Error, the app can not fetch sights: $error", Toast.LENGTH_LONG).show()
     }
 
 
-    private fun onCurrentLocationViewUpdate(uiState: CurrentLocationViewModel.UICurrentLocationState, view: View, map: GoogleMap) {
+    private fun onCurrentLocationViewUpdate(uiState: CurrentLocationViewModel.UICurrentLocationState, map: GoogleMap) {
         when (uiState) {
             is CurrentLocationViewModel.UICurrentLocationState.Result -> onCurrentLocationFetched(uiState.location, map)
-            is CurrentLocationViewModel.UICurrentLocationState.Error -> onCurrentLocationFetchedError(uiState.error, view.context)
+            is CurrentLocationViewModel.UICurrentLocationState.Error -> onCurrentLocationFetchedError(uiState.error)
             is CurrentLocationViewModel.UICurrentLocationState.Empty -> Unit
             is CurrentLocationViewModel.UICurrentLocationState.Processing -> Unit
         }
@@ -163,15 +158,15 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5F))
     }
 
+    private fun onCurrentLocationFetchedError(error: String) {
+        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+    }
+
     private fun getUserIcon(): BitmapDescriptor {
         val size = 124
         val bitmap = BitmapFactory.decodeResource(resources, R.drawable.user_location)
         val marker = Bitmap.createScaledBitmap(bitmap, size, size, false)
         return BitmapDescriptorFactory.fromBitmap(marker)
-    }
-
-    private fun onCurrentLocationFetchedError(error: String, context: Context) {
-        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
     }
 
     private fun askGeolocationPermissions() {
