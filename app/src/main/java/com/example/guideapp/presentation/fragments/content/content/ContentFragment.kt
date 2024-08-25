@@ -3,6 +3,7 @@ package com.example.guideapp.presentation.fragments.content.content
 import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -105,7 +106,8 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         polyline?.remove()
         routes.forEach { route ->
             val decodedPath = PolyUtil.decode(route.points)
-            polyline = map.addPolyline(PolylineOptions().addAll(decodedPath))
+            val options = PolylineOptions().color(Color.RED)
+            polyline = map.addPolyline(options.addAll(decodedPath))
         }
     }
 
