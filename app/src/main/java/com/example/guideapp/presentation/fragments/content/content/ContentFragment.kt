@@ -44,10 +44,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         askGeolocationPermissions()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_content, container, false)
     }
 
@@ -78,7 +75,8 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun showSights() {
         val state = sightsVM.uiSightsState.value
         if (state is SightsViewModel.UISightsState.Result) {
-            parentFragmentManager.beginTransaction()
+            parentFragmentManager
+                .beginTransaction()
                 .add(R.id.container, SightsFragment(state.origin, state.sights))
                 .addToBackStack("SightsFragment")
                 .commit()
