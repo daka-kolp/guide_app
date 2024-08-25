@@ -26,7 +26,7 @@ data class SightDto(
 
     private fun getImagePath(photo: PhotoDto): String? {
         return if (photo.photoReference != null) {
-            "${baseUrl}place/photo?maxwidth=200&photo_reference=${photo.photoReference}&key=$apiKey"
+            "${baseUrl}place/photo?maxwidth=480&photo_reference=${photo.photoReference}&key=$apiKey"
         } else {
             null
         }

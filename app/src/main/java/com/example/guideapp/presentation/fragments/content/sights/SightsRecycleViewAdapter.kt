@@ -11,7 +11,8 @@ import com.example.guideapp.R
 import com.example.guideapp.core.domain.entities.Sight
 import com.squareup.picasso.Picasso
 
-class ResultsRecycleViewAdapter(private var items: MutableList<Sight> = mutableListOf()) : RecyclerView.Adapter<TaskViewHolder>() {
+class ResultsRecycleViewAdapter(private var items: MutableList<Sight> = mutableListOf()) :
+    RecyclerView.Adapter<TaskViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val listItemView = LayoutInflater
             .from(parent.context)
@@ -25,8 +26,8 @@ class ResultsRecycleViewAdapter(private var items: MutableList<Sight> = mutableL
         val item = items[position]
         holder.name.text = item.name
         holder.location.text = item.geolocation.formatted()
-        val image = item.photos?.first()
-        if(image != null) Picasso.get().load(image).into(holder.image)
+        val image = item.photo
+        if (image != null) Picasso.get().load(image).into(holder.image)
 
     }
 }

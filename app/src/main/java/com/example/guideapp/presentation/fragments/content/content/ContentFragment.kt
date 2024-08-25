@@ -12,6 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.maps.android.PolyUtil
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,6 +46,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private val sightsVM by viewModels<SightsViewModel>()
     private val locationVM by viewModels<CurrentLocationViewModel>()
     private var polyline: Polyline? = null
+    private var previewImage: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +66,14 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         supportMapFragment.getMapAsync { mapCallback(it) }
 
         setupAppBar()
+
+        previewImage = view.findViewById(R.id.sight_preview_image)
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         directionsVM.getDirections(marker.position.geolocationFromLatLng())
         marker.showInfoWindow()
+        Picasso.get().load(marker.snippet).into(previewImage)
         return true
     }
 
@@ -112,7 +118,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun onSightFetched(sights: List<Sight>, map: GoogleMap) {
         sights.forEach { sight ->
             val coordinates = sight.geolocation.latLngFromGeolocation()
-            val options = MarkerOptions().position(coordinates).title(sight.name)
+            val options = MarkerOptions().position(coordinates).title(sight.name).snippet(sight.photo)
             map.addMarker(options)
         }
     }
