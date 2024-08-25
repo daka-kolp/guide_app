@@ -184,7 +184,6 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_menu, menu)
             }
-
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.reload_button -> {
@@ -193,17 +192,14 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                         locationVM.getCurrentLocation()
                         true
                     }
-
                     R.id.show_sights_button -> {
                         showSights()
                         true
                     }
-
                     R.id.logout_button -> {
                         (requireActivity() as OnAuthLaunch).logout()
                         true
                     }
-
                     else -> false
                 }
             }
