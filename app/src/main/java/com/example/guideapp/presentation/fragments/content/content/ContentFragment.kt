@@ -7,13 +7,18 @@ import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import com.example.guideapp.R
 import com.example.guideapp.core.domain.entities.Geolocation
 import com.example.guideapp.core.domain.entities.Route
@@ -53,18 +58,11 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         super.onViewCreated(view, savedInstanceState)
         locationVM.getCurrentLocation()
 
-        val reloadButton = view.findViewById<Button>(R.id.reload_button)
-        reloadButton.setOnClickListener { locationVM.getCurrentLocation() }
-
-        val showSightsButton = view.findViewById<Button>(R.id.show_sights_button)
-        showSightsButton.setOnClickListener { showSights() }
-
-        val logoutButton = view.findViewById<Button>(R.id.logout_button)
-        logoutButton.setOnClickListener { (requireActivity() as OnAuthLaunch).logout() }
-
         val childManager = getChildFragmentManager()
         val supportMapFragment = childManager.findFragmentById(R.id.map) as SupportMapFragment
         supportMapFragment.getMapAsync { mapCallback(it) }
+
+        setupAppBar()
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
@@ -195,5 +193,36 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private fun Location.latLngFromLocation(): LatLng {
         return LatLng(latitude, longitude)
+    }
+
+    private fun setupAppBar() {
+        val activity = requireActivity() as AppCompatActivity
+        activity.setSupportActionBar(activity.findViewById(R.id.app_bar))
+        activity.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.main_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.reload_button -> {
+                        locationVM.getCurrentLocation()
+                        true
+                    }
+
+                    R.id.show_sights_button -> {
+                        showSights()
+                        true
+                    }
+
+                    R.id.logout_button -> {
+                        (requireActivity() as OnAuthLaunch).logout()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 }
