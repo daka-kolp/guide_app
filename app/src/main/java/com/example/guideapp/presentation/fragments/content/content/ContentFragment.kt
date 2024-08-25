@@ -36,7 +36,6 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private val directionsVM by viewModels<DirectionsViewModel>()
     private val sightsVM by viewModels<SightsViewModel>()
     private val currentLocationVM by viewModels<CurrentLocationViewModel>()
-    private var userMarker: Marker? = null
     private var polyline: Polyline? = null
 
     override fun onCreateView(
@@ -48,8 +47,10 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         currentLocationVM.getCurrentLocation()
+
+        val reloadButton = view.findViewById<Button>(R.id.reload_button)
+        reloadButton.setOnClickListener {  currentLocationVM.getCurrentLocation() }
 
         val showSightsButton = view.findViewById<Button>(R.id.show_sights_button)
         showSightsButton.setOnClickListener { showSights() }
@@ -152,13 +153,13 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     private fun onCurrentLocationFetched(currentLocation: Location, map: GoogleMap) {
-        userMarker?.remove()
+        map.clear()
         val location = currentLocation.geolocationFromLocation()
         directionsVM.origin = location
         sightsVM.getSights(location)
         val latLng = currentLocation.latLngFromLocation()
         val options = MarkerOptions().icon(getUserIcon()).position(latLng).title("My current position")
-        userMarker = map.addMarker(options)
+        map.addMarker(options)
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5F))
     }
 
