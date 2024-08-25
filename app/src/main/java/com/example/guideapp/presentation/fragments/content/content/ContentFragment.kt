@@ -13,10 +13,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -47,6 +49,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private val locationVM by viewModels<CurrentLocationViewModel>()
     private var polyline: Polyline? = null
     private var previewImage: ImageView? = null
+    private var timeAndDistance: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,12 +71,13 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         setupAppBar()
 
         previewImage = view.findViewById(R.id.sight_preview_image)
+        timeAndDistance = view.findViewById(R.id.time_distance)
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         directionsVM.getDirections(marker.position.geolocationFromLatLng())
         marker.showInfoWindow()
-        Picasso.get().load(marker.snippet).into(previewImage)
+        setSightImage(marker.snippet)
         return true
     }
 
@@ -100,6 +104,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             val options = PolylineOptions().color(Color.RED)
             polyline = map.addPolyline(options.addAll(decodedPath))
         }
+        setTimeAndDistance(routes.first())
     }
 
     private fun onRouteFetchedError(error: String) {
@@ -183,6 +188,8 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.reload_button -> {
+                        setSightImage(null)
+                        setTimeAndDistance(null)
                         locationVM.getCurrentLocation()
                         true
                     }
@@ -201,6 +208,16 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun setSightImage(imagePath: String?) {
+        Picasso.get().load(imagePath).into(previewImage)
+    }
+
+    private fun setTimeAndDistance(route: Route?) {
+        timeAndDistance?.isVisible = route != null
+        val text = if (route != null) route.getFormattedTime() + ", " + route.getFormattedDistance() else ""
+        timeAndDistance?.text = text
     }
 
     private fun showSights() {

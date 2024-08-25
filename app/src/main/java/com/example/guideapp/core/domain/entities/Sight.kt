@@ -1,8 +1,8 @@
 package com.example.guideapp.core.domain.entities
 
 data class Sight(
-    val geolocation: Geolocation,
     val name: String,
+    val geolocation: Geolocation,
     val photos: List<String>?,
 ) {
     val photo: String? = photos?.first()

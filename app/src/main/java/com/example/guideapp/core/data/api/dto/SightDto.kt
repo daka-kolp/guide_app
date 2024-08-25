@@ -8,8 +8,8 @@ import com.google.gson.annotations.SerializedName
 
 data class SightsDto(@SerializedName("results") val sights: List<SightDto>)
 data class SightDto(
-    val geometry: GeometryDto,
     val name: String,
+    val geometry: GeometryDto,
     val photos: List<PhotoDto>? = null,
     @SerializedName("vicinity") val address: String,
 ) {
@@ -18,8 +18,8 @@ data class SightDto(
         val photos = photos?.map { getImagePath(it) }?.filterIsInstance<String>()
 
         return Sight(
-            geolocation = Geolocation(location.lat, location.lng),
             name = name,
+            geolocation = Geolocation(location.lat, location.lng),
             photos = photos
         )
     }

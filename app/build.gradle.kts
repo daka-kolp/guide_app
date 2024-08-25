@@ -78,8 +78,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.11.0")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation("com.squareup.retrofit2:adapter-rxjava2:2.11.0")
     implementation("com.google.dagger:hilt-android:2.46.1")
     kapt ("com.google.dagger:hilt-compiler:2.46.1")
@@ -89,6 +87,5 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.google.maps.android:android-maps-utils:3.5.3")
-    implementation("com.github.bumptech.glide:glide:4.14.2")
     implementation("com.squareup.picasso:picasso:2.8")
 }
