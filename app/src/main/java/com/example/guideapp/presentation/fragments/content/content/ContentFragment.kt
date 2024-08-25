@@ -1,7 +1,6 @@
 package com.example.guideapp.presentation.fragments.content.content
 
 import android.Manifest
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
@@ -67,7 +66,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
         val childManager = getChildFragmentManager()
         val supportMapFragment = childManager.findFragmentById(R.id.map) as SupportMapFragment
-        supportMapFragment.getMapAsync { mapCallback(it, view) }
+        supportMapFragment.getMapAsync { mapCallback(it) }
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
@@ -88,7 +87,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    private fun mapCallback(map: GoogleMap, view: View) {
+    private fun mapCallback(map: GoogleMap) {
         directionsVM.uiDirectionsState.observe(viewLifecycleOwner) { onDirectionsViewUpdate(it, map) }
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, map) }
         locationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, map) }
@@ -98,7 +97,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun onDirectionsViewUpdate(uiState: DirectionsViewModel.UIDirectionsState, map: GoogleMap) {
         when (uiState) {
             is DirectionsViewModel.UIDirectionsState.Result -> onRouteFetched(uiState.routes, map)
-            is DirectionsViewModel.UIDirectionsState.Error -> onRouteFetchedError(uiState.error,)
+            is DirectionsViewModel.UIDirectionsState.Error -> onRouteFetchedError(uiState.error)
             is DirectionsViewModel.UIDirectionsState.Empty -> Unit
             is DirectionsViewModel.UIDirectionsState.Processing -> Unit
         }
