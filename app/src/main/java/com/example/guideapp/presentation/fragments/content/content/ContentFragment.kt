@@ -71,19 +71,6 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         return true
     }
 
-    private fun showSights() {
-        val state = sightsVM.uiSightsState.value
-        if (state is SightsViewModel.UISightsState.Result) {
-            parentFragmentManager
-                .beginTransaction()
-                .add(R.id.container, SightsFragment(state.origin, state.sights))
-                .addToBackStack("SightsFragment")
-                .commit()
-        } else if (state is SightsViewModel.UISightsState.Error) {
-            onSightFetchedError(state.error)
-        }
-    }
-
     private fun mapCallback(map: GoogleMap) {
         directionsVM.uiDirectionsState.observe(viewLifecycleOwner) { onDirectionsViewUpdate(it, map) }
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, map) }
@@ -179,22 +166,6 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         )
     }
 
-    private fun LatLng.geolocationFromLatLng(): Geolocation {
-        return Geolocation(latitude, longitude)
-    }
-
-    private fun Location.geolocationFromLocation(): Geolocation {
-        return Geolocation(latitude, longitude)
-    }
-
-    private fun Geolocation.latLngFromGeolocation(): LatLng {
-        return LatLng(latitude, longitude)
-    }
-
-    private fun Location.latLngFromLocation(): LatLng {
-        return LatLng(latitude, longitude)
-    }
-
     private fun setupAppBar() {
         val activity = requireActivity() as AppCompatActivity
         activity.setSupportActionBar(activity.findViewById(R.id.app_bar))
@@ -224,5 +195,34 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun showSights() {
+        val state = sightsVM.uiSightsState.value
+        if (state is SightsViewModel.UISightsState.Result) {
+            parentFragmentManager
+                .beginTransaction()
+                .add(R.id.container, SightsFragment(state.origin, state.sights))
+                .addToBackStack("SightsFragment")
+                .commit()
+        } else if (state is SightsViewModel.UISightsState.Error) {
+            onSightFetchedError(state.error)
+        }
+    }
+
+    private fun LatLng.geolocationFromLatLng(): Geolocation {
+        return Geolocation(latitude, longitude)
+    }
+
+    private fun Location.geolocationFromLocation(): Geolocation {
+        return Geolocation(latitude, longitude)
+    }
+
+    private fun Geolocation.latLngFromGeolocation(): LatLng {
+        return LatLng(latitude, longitude)
+    }
+
+    private fun Location.latLngFromLocation(): LatLng {
+        return LatLng(latitude, longitude)
     }
 }
