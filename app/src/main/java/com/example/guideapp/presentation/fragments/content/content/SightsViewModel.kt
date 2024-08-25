@@ -18,15 +18,13 @@ class SightsViewModel @Inject constructor(private val repository: GuideRepositor
     private val _uiSightsState = MutableLiveData<UISightsState>(UISightsState.Empty)
     val uiSightsState: LiveData<UISightsState> = _uiSightsState
 
-    fun getSights() {
+    fun getSights(origin: Geolocation) {
         _uiSightsState.value = UISightsState.Processing
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 var value: UISightsState = UISightsState.Processing
                 _uiSightsState.postValue(value)
                 try {
-                    //TODO: currentLocation
-                    val origin = Geolocation(47.8353006, 35.1388571)
                     val result = repository.getSightsByUserLocation(origin)
                     value = UISightsState.Result(result)
                 } catch (e: Exception) {

@@ -18,16 +18,18 @@ class DirectionsViewModel @Inject constructor(private val repository: GuideRepos
     private val _uiDirectionsState = MutableLiveData<UIDirectionsState>(UIDirectionsState.Empty)
     val uiDirectionsState: LiveData<UIDirectionsState> = _uiDirectionsState
 
+    var origin: Geolocation? = null
+
     fun getDirections(destination: Geolocation) {
+        val currentLocation = origin ?: return
+
         _uiDirectionsState.value = UIDirectionsState.Processing
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 var value: UIDirectionsState = UIDirectionsState.Processing
                 _uiDirectionsState.postValue(value)
                 try {
-                    //TODO: get currentLocation
-                    val origin = Geolocation(47.8353006, 35.1388571)
-                    val result = repository.getDirections(origin, destination)
+                    val result = repository.getDirections(currentLocation, destination)
                     value = UIDirectionsState.Result(result)
                 } catch (e: Exception) {
                     value = UIDirectionsState.Error(e.localizedMessage ?: e.toString())

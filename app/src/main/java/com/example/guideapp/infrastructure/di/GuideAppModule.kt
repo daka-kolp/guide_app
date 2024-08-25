@@ -5,6 +5,8 @@ import com.example.guideapp.core.data.GoogleGuideRepository
 import com.example.guideapp.core.data.api.GuideApiClient
 import com.example.guideapp.core.domain.GuideRepository
 import com.example.guideapp.infrastructure.utils.GoogleSignInProvider
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,5 +29,11 @@ class GuideAppLogicModule {
     @Provides
     fun getGoogleSignInProvider(@ApplicationContext context: Context): GoogleSignInProvider {
         return GoogleSignInProvider(context)
+    }
+
+    @Singleton
+    @Provides
+    fun getLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
     }
 }

@@ -3,6 +3,7 @@ package com.example.guideapp.presentation.fragments.content.content
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private val directionsVM by viewModels<DirectionsViewModel>()
     private val sightsVM by viewModels<SightsViewModel>()
+    private val currentLocationVM by viewModels<CurrentLocationViewModel>()
+    private var userMarker: Marker? = null
     private var polyline: Polyline? = null
 
     override fun onCreateView(
@@ -46,7 +49,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sightsVM.getSights()
+        currentLocationVM.getCurrentLocation()
 
         val showSightsButton = view.findViewById<Button>(R.id.show_sights_button)
         showSightsButton.setOnClickListener { showSights() }
@@ -60,7 +63,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        directionsVM.getDirections(marker.position.toGeolocation())
+        directionsVM.getDirections(marker.position.geolocationFromLatLng())
         marker.showInfoWindow()
         return true
     }
@@ -75,13 +78,9 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     private fun mapCallback(map: GoogleMap, view: View) {
-        //TODO: get currentLocation
-        val location = LatLng(47.8353006, 35.1388571)
-        val options = MarkerOptions().icon(getUserIcon()).position(location).title("My current position")
-        map.addMarker(options)
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14.5F))
         directionsVM.uiDirectionsState.observe(viewLifecycleOwner) { onDirectionsViewUpdate(it, view, map) }
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, view, map) }
+        currentLocationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, view, map) }
         map.setOnMarkerClickListener(this)
     }
 
@@ -128,7 +127,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private fun onSightFetched(sights: List<Sight>, map: GoogleMap) {
         sights.forEach { sight ->
-            val coordinates = sight.geolocation.toLatLng()
+            val coordinates = sight.geolocation.latLngFromGeolocation()
             val options = MarkerOptions().position(coordinates).title(sight.name)
             map.addMarker(options)
         }
@@ -142,11 +141,43 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         ).show()
     }
 
-    private fun LatLng.toGeolocation(): Geolocation {
+
+    private fun onCurrentLocationViewUpdate(uiState: CurrentLocationViewModel.UICurrentLocationState, view: View, map: GoogleMap) {
+        when (uiState) {
+            is CurrentLocationViewModel.UICurrentLocationState.Result -> onCurrentLocationFetched(uiState.location, map)
+            is CurrentLocationViewModel.UICurrentLocationState.Error -> onCurrentLocationFetchedError(uiState.error, view.context)
+            is CurrentLocationViewModel.UICurrentLocationState.Empty -> Unit
+            is CurrentLocationViewModel.UICurrentLocationState.Processing -> Unit
+        }
+    }
+
+    private fun onCurrentLocationFetched(currentLocation: Location, map: GoogleMap) {
+        userMarker?.remove()
+        val location = currentLocation.geolocationFromLocation()
+        directionsVM.origin = location
+        sightsVM.getSights(location)
+        val latLng = currentLocation.latLngFromLocation()
+        val options = MarkerOptions().icon(getUserIcon()).position(latLng).title("My current position")
+        userMarker = map.addMarker(options)
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5F))
+    }
+
+    private fun onCurrentLocationFetchedError(error: String, context: Context) {
+        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+    }
+
+    private fun LatLng.geolocationFromLatLng(): Geolocation {
+        return Geolocation(latitude, longitude)
+    }
+    private fun Location.geolocationFromLocation(): Geolocation {
         return Geolocation(latitude, longitude)
     }
 
-    private fun Geolocation.toLatLng(): LatLng {
+    private fun Geolocation.latLngFromGeolocation(): LatLng {
+        return LatLng(latitude, longitude)
+    }
+
+    private fun Location.latLngFromLocation(): LatLng {
         return LatLng(latitude, longitude)
     }
 }
