@@ -26,7 +26,7 @@ class SightsViewModel @Inject constructor(private val repository: GuideRepositor
                 _uiSightsState.postValue(value)
                 try {
                     val result = repository.getSightsByUserLocation(origin)
-                    value = UISightsState.Result(result)
+                    value = UISightsState.Result(origin, result)
                 } catch (e: Exception) {
                     value = UISightsState.Error(e.localizedMessage ?: e.toString())
                 } finally {
@@ -39,7 +39,7 @@ class SightsViewModel @Inject constructor(private val repository: GuideRepositor
     sealed class UISightsState {
         data object Empty : UISightsState()
         data object Processing : UISightsState()
-        class Result(val sights: List<Sight>) : UISightsState()
+        class Result(val origin: Geolocation, val sights: List<Sight>) : UISightsState()
         class Error(val error: String) : UISightsState()
     }
 }

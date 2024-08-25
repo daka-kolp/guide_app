@@ -73,7 +73,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         val state = sightsVM.uiSightsState.value
         if (state is SightsViewModel.UISightsState.Result)
             parentFragmentManager.beginTransaction()
-                .add(R.id.container, SightsFragment(state.sights))
+                .add(R.id.container, SightsFragment(state.origin, state.sights))
                 .addToBackStack("SightsFragment")
                 .commit()
     }
@@ -83,13 +83,6 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, view, map) }
         currentLocationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, view, map) }
         map.setOnMarkerClickListener(this)
-    }
-
-    private fun getUserIcon(): BitmapDescriptor {
-        val size = 124
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.user_location)
-        val marker = Bitmap.createScaledBitmap(bitmap, size, size, false)
-        return BitmapDescriptorFactory.fromBitmap(marker)
     }
 
     private fun onDirectionsViewUpdate(uiState: DirectionsViewModel.UIDirectionsState, view: View, map: GoogleMap) {
@@ -161,6 +154,13 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         val options = MarkerOptions().icon(getUserIcon()).position(latLng).title("My current position")
         map.addMarker(options)
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5F))
+    }
+
+    private fun getUserIcon(): BitmapDescriptor {
+        val size = 124
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.user_location)
+        val marker = Bitmap.createScaledBitmap(bitmap, size, size, false)
+        return BitmapDescriptorFactory.fromBitmap(marker)
     }
 
     private fun onCurrentLocationFetchedError(error: String, context: Context) {
