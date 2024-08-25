@@ -1,5 +1,6 @@
 package com.example.guideapp.presentation.fragments.content.content
 
+import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.guideapp.R
@@ -35,8 +37,13 @@ import dagger.hilt.android.AndroidEntryPoint
 class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private val directionsVM by viewModels<DirectionsViewModel>()
     private val sightsVM by viewModels<SightsViewModel>()
-    private val currentLocationVM by viewModels<CurrentLocationViewModel>()
+    private val locationVM by viewModels<CurrentLocationViewModel>()
     private var polyline: Polyline? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        askGeolocationPermissions()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,10 +54,10 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentLocationVM.getCurrentLocation()
+        locationVM.getCurrentLocation()
 
         val reloadButton = view.findViewById<Button>(R.id.reload_button)
-        reloadButton.setOnClickListener {  currentLocationVM.getCurrentLocation() }
+        reloadButton.setOnClickListener { locationVM.getCurrentLocation() }
 
         val showSightsButton = view.findViewById<Button>(R.id.show_sights_button)
         showSightsButton.setOnClickListener { showSights() }
@@ -81,7 +88,7 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun mapCallback(map: GoogleMap, view: View) {
         directionsVM.uiDirectionsState.observe(viewLifecycleOwner) { onDirectionsViewUpdate(it, view, map) }
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, view, map) }
-        currentLocationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, view, map) }
+        locationVM.uiCurrentLocationState.observe(viewLifecycleOwner) { onCurrentLocationViewUpdate(it, view, map) }
         map.setOnMarkerClickListener(this)
     }
 
@@ -167,9 +174,23 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
     }
 
+    private fun askGeolocationPermissions() {
+        val permissionRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            val afl = Manifest.permission.ACCESS_FINE_LOCATION
+            val acl = Manifest.permission.ACCESS_COARSE_LOCATION
+            if (it.getOrDefault(afl, false) || it.getOrDefault(acl, false)) {
+                locationVM.getCurrentLocation()
+            }
+        }
+        permissionRequest.launch(
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        )
+    }
+
     private fun LatLng.geolocationFromLatLng(): Geolocation {
         return Geolocation(latitude, longitude)
     }
+
     private fun Location.geolocationFromLocation(): Geolocation {
         return Geolocation(latitude, longitude)
     }

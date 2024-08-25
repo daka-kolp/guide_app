@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        askGeolocationPermissions()
     }
 
     override fun login(intent: Intent) {
@@ -60,12 +59,5 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch {
         } else {
             Toast.makeText(this, "Error: $result", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun askGeolocationPermissions() {
-        val permissionRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
-        permissionRequest.launch(
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-        )
     }
 }
