@@ -217,15 +217,16 @@ class ContentFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     private fun showSights() {
-        val state = sightsVM.uiSightsState.value
-        if (state is SightsViewModel.UISightsState.Result) {
+        val clState = locationVM.uiCurrentLocationState.value
+        val sState = sightsVM.uiSightsState.value
+        if (sState is SightsViewModel.UISightsState.Result && clState is CurrentLocationViewModel.UICurrentLocationState.Result) {
             parentFragmentManager
                 .beginTransaction()
-                .add(R.id.container, SightsFragment(state.origin, state.sights))
+                .add(R.id.container, SightsFragment(clState.location.geolocationFromLocation()))
                 .addToBackStack("SightsFragment")
                 .commit()
-        } else if (state is SightsViewModel.UISightsState.Error) {
-            onSightFetchedError(state.error)
+        } else if (sState is SightsViewModel.UISightsState.Error) {
+            onSightFetchedError(sState.error)
         }
     }
 

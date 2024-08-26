@@ -18,10 +18,16 @@ import com.example.guideapp.presentation.fragments.content.content.SightsViewMod
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SightsFragment(private val origin: Geolocation, private val initialSights: List<Sight>) : Fragment() {
+class SightsFragment(private val origin: Geolocation? = null) : Fragment() {
     private val sightsVM by viewModels<SightsViewModel>()
+    private val locationVM by viewModels<LocationViewModel>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeContainer: SwipeRefreshLayout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        locationVM.saveLocation(origin)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,15 +39,22 @@ class SightsFragment(private val origin: Geolocation, private val initialSights:
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getSights()
+
         swipeContainer = view.findViewById(R.id.refreshLayout)
-        swipeContainer.setOnRefreshListener { sightsVM.getSights(origin) }
+        swipeContainer.setOnRefreshListener { getSights() }
 
         recyclerView = view.findViewById(R.id.results_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
-        val adapter = ResultsRecycleViewAdapter(initialSights as ArrayList<Sight>)
-        recyclerView.adapter = adapter
 
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, view) }
+    }
+
+    private fun getSights() {
+        val location = locationVM.valueToUpdate.value
+        if (location != null) {
+            sightsVM.getSights(location)
+        }
     }
 
     private fun onSightsViewUpdate(uiState: SightsViewModel.UISightsState, view: View) {
