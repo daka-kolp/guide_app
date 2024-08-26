@@ -18,7 +18,7 @@ import com.example.guideapp.presentation.fragments.content.content.SightsViewMod
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SightsFragment(private val location: Geolocation, private val sights: List<Sight>) : Fragment() {
+class SightsFragment(private val origin: Geolocation, private val initialSights: List<Sight>) : Fragment() {
     private val sightsVM by viewModels<SightsViewModel>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeContainer: SwipeRefreshLayout
@@ -34,11 +34,11 @@ class SightsFragment(private val location: Geolocation, private val sights: List
         super.onViewCreated(view, savedInstanceState)
 
         swipeContainer = view.findViewById(R.id.refreshLayout)
-        swipeContainer.setOnRefreshListener { sightsVM.getSights(location) }
+        swipeContainer.setOnRefreshListener { sightsVM.getSights(origin) }
 
         recyclerView = view.findViewById(R.id.results_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
-        val adapter = ResultsRecycleViewAdapter(sights as ArrayList<Sight>)
+        val adapter = ResultsRecycleViewAdapter(initialSights as ArrayList<Sight>)
         recyclerView.adapter = adapter
 
         sightsVM.uiSightsState.observe(viewLifecycleOwner) { onSightsViewUpdate(it, view) }
