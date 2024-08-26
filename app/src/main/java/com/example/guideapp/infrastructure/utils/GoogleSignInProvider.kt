@@ -38,7 +38,7 @@ class GoogleSignInProvider @Inject constructor(private val context: Context) {
                 else onFailure("Login is not successful")
             }
         } catch (e: ApiException) {
-            onFailure(e.message ?: "")
+            onFailure(e.localizedMessage ?: e.toString())
         }
     }
 
